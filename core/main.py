@@ -8,3 +8,7 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/18
 -------------------------------------------------
 """
+
+
+def run():
+    print("initiation succeed!")

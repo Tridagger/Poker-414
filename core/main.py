@@ -1,4 +1,10 @@
-
-
-def run():
-    print("this is define run.")
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+Project Name: Poker-414
+File Name: main.py
+Author: Tridagger
+Email: san.limeng@qq.com
+Create Date: 2021/11/18
+-------------------------------------------------
+"""

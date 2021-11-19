@@ -8,6 +8,8 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/18
 -------------------------------------------------
 """
+import random
+
 from core.poker import *
 
 
@@ -15,16 +17,10 @@ from core.poker import *
 def run(*args, debug=False, **kwargs):
     if debug:
         pass
-    card = PokerCard()
-    card.shuffle(5)
-    card_ls = card[0:14]
-    for index, item in enumerate(card_ls):
-        print(index, item)
     while True:
-        ls = input('请出牌:').split(',')  # 用,作分割符
-        ls = [int(n) for n in ls]
-        lst = []
-        for i in ls:
-            lst.append(card_ls[i])
-
-        print(whats_hand(lst))
+        ls = []
+        a = input('请输入牌值：').split(',')
+        for i in a:
+            ls.append(Card(i, random.choice(PokerCard.suits)))
+        print(ls)
+        print(whats_hand(ls))

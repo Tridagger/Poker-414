@@ -69,10 +69,7 @@ def calc_card_level(card):
 def is_solo(cards):
     assert isinstance(cards, list)
     cl = sorted([calc_card_level(card) for card in cards])
-    if len(cl) == 1:
-        return True
-    else:
-        return False
+    return len(cl) == 1
 
 
 #  判断是否为对牌
@@ -150,7 +147,6 @@ def is_rocket(cards):
 # 判断牌型
 def whats_hand(cards):
     if is_solo(cards):
-
         return "单牌"
     elif is_pair(cards):
         return "对牌"

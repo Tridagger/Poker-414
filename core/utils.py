@@ -13,7 +13,7 @@ from collections import Counter
 
 def calc_card_level(card):
     """
-    计算单牌的level值，用来比较牌面大小
+    计算单张牌的level值，用来比较牌面大小
     :param card: Card类型，单张牌
     :return: level值
     """
@@ -31,6 +31,12 @@ def calc_card_level(card):
         return card_dict[str(card[0])]
     else:
         return int(card[0])
+
+
+def card_to_num(cards, m=0):
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(filter(lambda x: x > m, cl))
+    return cl_after
 
 
 def is_solo(cards):

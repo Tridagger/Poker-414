@@ -14,6 +14,11 @@ from core import poker
 
 
 def cards_generate(types=0):
+    """
+    牌型生成器
+    :param types: 0: 随机, 1: 单牌, 2: 对牌, 3: 顺子, 4: 连对, 5: 炸弹, 6: 导弹, 7: 火箭
+    :return: list: 扑克列表
+    """
     cards = list(poker.PokerCard())
     card_list = []
     card_dict = {
@@ -95,4 +100,4 @@ def cards_generate(types=0):
             return card_list
 
         case _:
-            pass
+            return None

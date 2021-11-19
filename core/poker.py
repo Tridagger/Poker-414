@@ -45,5 +45,5 @@ class PokerCard:
         """
         for i in range(n):
             random.shuffle(self._cards)
-        return "洗牌结束"
+        return self._cards
 

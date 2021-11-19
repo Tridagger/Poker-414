@@ -18,13 +18,11 @@ from tests.cards import cards_generate
 def run(debug=False):
     if debug:
         pass
-    cnt = 0
-    for i in range(100000):
-        a = cards_generate(random.randint(1, 7))
-        b = 'red,black'.split(',')
-        c = [Card(i, random.choice(PokerCard.suits)) for i in b]
-        if not card_compare(a, c):
-            print(a)
-            cnt += 1
-    print(cnt)
+    c = 0
+    while True:
+        cards = list(PokerCard().shuffle(2))[:13]
+        if have_pair(cards, 3)[0]:
+            print(sorted([calc_card_level(card) for card in cards]))
+            print(have_pair(cards, 3))
+            break
 

@@ -8,6 +8,7 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/19
 -------------------------------------------------
 """
+from collections import Counter
 
 
 def calc_card_level(card):
@@ -66,12 +67,12 @@ def is_chain(cards):
     """
     判断是否为顺子
     :param cards: List类型，扑克牌列表
-    :return: True：是顺子，最大牌点数   False不是顺子
+    :return: True：是顺子，最小牌点数   False不是顺子
     """
     assert isinstance(cards, list)
     cl = sorted([calc_card_level(card) for card in cards])
     if 2 < len(cl) == (cl[-1] - cl[0] + 1) and len(cl) == len(set(cl)):
-        return True, max(cl), len(cl)
+        return True, min(cl), len(cl)
     else:
         return False, 0
 
@@ -80,7 +81,7 @@ def is_pair_chain(cards):
     """
     判断是否为连对
     :param cards: List类型，扑克牌列表
-    :return: True：是连对，最大牌点数   False不是连对
+    :return: True：是连对，最小牌点数   False不是连对
     """
     assert isinstance(cards, list)
     cl = sorted([calc_card_level(card) for card in cards])
@@ -90,7 +91,7 @@ def is_pair_chain(cards):
             if cl[i * 2] != cl[i * 2 + 1]:
                 return False, 0
         if len(cs) == (cs[-1] - cs[0] + 1):
-            return True, max(cs), len(cl)
+            return True, min(cs), len(cl)
         else:
             return False, 0
     else:
@@ -180,3 +181,81 @@ def card_compare(cards_1, cards_2):
         return False
 
 
+def have_rocket(cards):
+    """
+    扑克列表中是否含有火箭
+    :param cards: list: 扑克列表
+    :return: True: 有， False: 没有
+    """
+    cl = sorted([calc_card_level(card) for card in cards])
+    cnt = Counter(cl)
+    return cnt[4] >= 2 and cnt[14] >= 1
+
+
+def have_missile(cards, m=2):
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(filter(lambda x: x > m, cl))
+    cnt = Counter(cl_after)
+    hcl = []
+    for c in cnt:
+        if cnt[c] == 4:
+            hcl.append(c)
+    return bool(hcl), hcl
+
+
+def have_bomb(cards, m=2):
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(filter(lambda x: x > m, cl))
+    cnt = Counter(cl_after)
+    hcl = []
+    for c in cnt:
+        if cnt[c] == 3:
+            hcl.append(c)
+    return bool(hcl), hcl
+
+
+def have_chain(cards, m=2, n=3):
+    hcl = []
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(set(filter(lambda x: x > m, cl)))
+    for i in [16, 18, 19]:
+        if i in cl_after:
+            cl_after.remove(i)
+    for i in range(len(cl_after)-n+1):
+        cl_piece = cl_after[i: i+n]
+        if len(cl_piece) == (cl_piece[-1] - cl_piece[0] + 1):
+            hcl.append(cl_piece)
+    return bool(hcl), hcl
+
+
+def have_pair_chain(cards, m=3, n=6):
+    assert n in [6, 8, 10, 12, 14]
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(filter(lambda x: x > m, cl))
+    cnt = Counter(cl_after)
+    hcl = []
+    s = int(n/2)
+    cl_copy = []
+    for item in cl:
+        if cnt[item] >= 2:
+            cl_copy.append(item)
+    cl_set = sorted(list(set(cl_copy)))
+    if 16 in cl_set:
+        cl_set.remove(16)
+    for i in range(len(cl_set)-s+1):
+        cl_piece = cl_set[i: i+s]
+        if len(cl_piece) == (cl_piece[-1] - cl_piece[0] + 1):
+            hcl.append(cl_piece)
+    return bool(hcl), hcl
+
+
+def have_pair(cards, m=3):
+    cl = sorted([calc_card_level(card) for card in cards])
+    cl_after = list(filter(lambda x: x > m, cl))
+    cnt = Counter(cl_after)
+    cl_copy = []
+    for item in cl:
+        if cnt[item] >= 2:
+            cl_copy.append(item)
+    hcl = sorted(list(set(cl_copy)))
+    return bool(hcl), hcl

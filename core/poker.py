@@ -12,7 +12,7 @@ Create Date: 2021/11/18
 import collections
 import random
 
-Card = collections.namedtuple('扑克牌', ['大小', '花色'])  # 定义单张扑克牌
+Card = collections.namedtuple('Poker', ['rank', 'suit'])  # 定义单张扑克牌
 
 
 class PokerCard:

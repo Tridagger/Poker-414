@@ -71,21 +71,18 @@ def cards_generate(types=0):
             cards = cards[:-2]
             card_list.append(random.choice(cards))
             suits = list(poker.PokerCard.suits)
-            suits.pop(suits.index(card_list[0][1]))
-            card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
-            suits.pop(suits.index(card_list[1][1]))
-            card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
+            for i in range(2):
+                suits.pop(suits.index(card_list[i][1]))
+                card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
             return card_list
+
         case 6:  # 生成导弹
             cards = cards[:-2]
             card_list.append(random.choice(cards))
             suits = list(poker.PokerCard.suits)
-            suits.pop(suits.index(card_list[0][1]))
-            card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
-            suits.pop(suits.index(card_list[1][1]))
-            card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
-            suits.pop(suits.index(card_list[2][1]))
-            card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
+            for i in range(3):
+                suits.pop(suits.index(card_list[i][1]))
+                card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
             return card_list
 
         case 7:  # 生成火箭

@@ -123,12 +123,12 @@ def hand_type(cards):
     elif is_rocket(cards)[0]:
         return {"牌型": "火箭", "等级": 4, "牌数": 3, "大小": is_rocket(cards)[1]}
     else:
-        return {"牌型": "杂牌", "等级": None, "牌数": None, "大小": None}
+        return False
 
 
 # 牌型比较大小, cards_2比cards_1大则返回True，反之返回False
 def card_compare(cards_1, cards_2):
-    assert hand_type(cards_2)['牌型'] != '杂牌'
+    assert hand_type(cards_2)
     if hand_type(cards_2)['等级'] > hand_type(cards_1)['等级']:
         return True
     elif hand_type(cards_2)['牌型'] == hand_type(cards_1)['牌型'] \
@@ -136,7 +136,3 @@ def card_compare(cards_1, cards_2):
         return hand_type(cards_2)['大小'] > hand_type(cards_1)['大小']
     else:
         return False
-
-
-
-

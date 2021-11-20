@@ -200,7 +200,7 @@ def __have_rocket(cards):
     """
     扑克列表中是否含有火箭
     :param cards: list: 扑克列表
-    :return: True: 有， False: 没有
+    :return: 符合要求的列表
     """
     cl = __card_to_num(cards)
     cnt = Counter(cl)
@@ -211,6 +211,12 @@ def __have_rocket(cards):
 
 
 def __have_missile(cards, m=2):
+    """
+    扑克列表中是否含有大于 m 导弹
+    :param cards: list: 扑克列表
+    :param m: 最小值
+    :return: 符合要求的列表
+    """
     cl = __card_to_num(cards, m)
     cnt = Counter(cl)
     hcl = []
@@ -221,6 +227,12 @@ def __have_missile(cards, m=2):
 
 
 def __have_bomb(cards, m=2):
+    """
+    扑克列表中是否含有大于 m 炸弹
+    :param cards: list: 扑克列表
+    :param m: 最小值
+    :return: 符合要求的列表
+    """
     cl = __card_to_num(cards, m)
     cnt = Counter(cl)
     hcl = []
@@ -231,6 +243,13 @@ def __have_bomb(cards, m=2):
 
 
 def __have_chain(cards, m=2, n=3):
+    """
+    扑克列表中是否含大于 m 的 n 连顺子
+    :param cards: list: 扑克列表
+    :param m: 最小值
+    :param n: 牌数
+    :return: 符合要求的列表
+    """
     hcl = []
     cl = __card_to_num(cards, m)
     for i in [16, 18, 19]:
@@ -244,6 +263,13 @@ def __have_chain(cards, m=2, n=3):
 
 
 def __have_pair_chain(cards, m=2, n=6):
+    """
+    扑克列表中是否含大于 m 的 n 连对
+    :param cards: list: 扑克列表
+    :param m: 最小值
+    :param n: 牌数
+    :return: 符合要求的列表
+    """
     assert n in [6, 8, 10, 12, 14]
     cl = __card_to_num(cards, m)
     cnt = Counter(cl)
@@ -268,6 +294,12 @@ def __have_pair_chain(cards, m=2, n=6):
 
 
 def __have_pair(cards, m=2):
+    """
+    扑克列表中是否含大于 m 的对牌
+    :param cards: list: 扑克列表
+    :param m: 最小值
+    :return: 符合要求的列表
+    """
     cl = __card_to_num(cards, m)
     cnt = Counter(cl)
     hcl = []
@@ -284,6 +316,12 @@ def __have_pair(cards, m=2):
 
 
 def __use_bomb(card_list, cards):
+    """
+    添加所有炸弹，导弹 火箭的集合到列表中
+    :param card_list: list: 前面的列表
+    :param cards: list: 扑克列表
+    :return: 炸弹集合列表
+    """
     card_list += __have_bomb(cards)
     card_list += __have_missile(cards)
     card_list += __have_rocket(cards)
@@ -291,6 +329,12 @@ def __use_bomb(card_list, cards):
 
 
 def card_hint(card_1, card_2):
+    """
+    出牌提示
+    :param card_1: 被管的牌
+    :param card_2: 手牌
+    :return: 所有出牌方法的集合列表
+    """
     ht = hand_type(card_1)
     match ht['等级']:
         case 1:
@@ -320,6 +364,7 @@ def card_hint(card_1, card_2):
             card_list = __have_missile(card_2, ht['大小'])  # 把能管上的导弹加入列表
             card_list += __have_rocket(card_2)  # 把火箭加入列表
             return card_list
+
         case 4:
             return []
         case _:

@@ -20,14 +20,8 @@ import time
 def run(debug=False):
     if debug:
         pass
-    c = 0
-    t = time.time()
-    while True:
-        card1 = cards_generate(0)
-        assert hand_type(card1)
-        card2 = PokerCard().shuffle(2)[:14]
-        card_hint(card1, card2)
-        c += 1
-        if c % 10000 == 0:
-            print(c)
-            print(time.time()-t)
+
+    card2 = PokerCard().shuffle(2)[:6]
+    print(card2)
+    card3 = random_play_card(card2)
+    print(card3)

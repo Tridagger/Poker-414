@@ -8,6 +8,7 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/19
 -------------------------------------------------
 """
+import random
 from collections import Counter
 
 
@@ -237,7 +238,7 @@ def __have_bomb(cards, m=2):
     cnt = Counter(cl)
     hcl = []
     for c in cnt:
-        if cnt[c] == 3:
+        if cnt[c] >= 3:
             hcl.append([c, c, c])
     return hcl
 
@@ -251,7 +252,7 @@ def __have_chain(cards, m=2, n=3):
     :return: 符合要求的列表
     """
     hcl = []
-    cl = __card_to_num(cards, m)
+    cl = __card_to_num(cards, m, duplicate=False)
     for i in [16, 18, 19]:
         if i in cl:
             cl.remove(i)
@@ -315,17 +316,17 @@ def __have_pair(cards, m=2):
     return hcl
 
 
-def __use_bomb(card_list, cards):
+def __use_bomb(card_dict, cards):
     """
-    添加所有炸弹，导弹 火箭的集合到列表中
-    :param card_list: list: 前面的列表
-    :param cards: list: 扑克列表
-    :return: 炸弹集合列表
+    把所有炸弹，导弹，火箭添加进字典
+    :param card_dict: 提示字典
+    :param cards: 手牌
+    :return: 添加好的字典
     """
-    card_list += __have_bomb(cards)
-    card_list += __have_missile(cards)
-    card_list += __have_rocket(cards)
-    return card_list
+    card_dict['炸弹'] = __have_bomb(cards)
+    card_dict['导弹'] = __have_missile(cards)
+    card_dict['火箭'] = __have_rocket(cards)
+    return card_dict
 
 
 def card_hint(card_1, card_2):
@@ -333,40 +334,68 @@ def card_hint(card_1, card_2):
     出牌提示
     :param card_1: 被管的牌
     :param card_2: 手牌
-    :return: 所有出牌方法的集合列表
+    :return: dict 所有出牌方法的集合
     """
     ht = hand_type(card_1)
+    card_dict = {
+        '单牌': [],
+        '对牌': [],
+        '顺子': [],
+        '连对': [],
+        '炸弹': [],
+        '导弹': [],
+        '火箭': []
+    }
     match ht['等级']:
         case 1:
             match ht['牌型']:
                 case '单牌':
-                    card_list = __card_to_num(card_2, ht['大小'], duplicate=False)  # 把能管上的单牌加入列表
-                    return __use_bomb(card_list, card_2)  # 返回加入炸弹
+                    sl = __card_to_num(card_2, ht['大小'], duplicate=False)  # 把能管上的单牌加入字典
+                    for i in sl:
+                        card_dict['单牌'].append([i])  # 封装成列表 保持统一
 
                 case '对牌':
-                    card_list = __have_pair(card_2, ht['大小'])  # 把能管上的对牌加入列表
-                    return __use_bomb(card_list, card_2)  # 返回加入炸弹
+                    card_dict['对牌'] = __have_pair(card_2, ht['大小'])  # 把能管上的对牌加入字典
 
                 case '顺子':
-                    card_list = __have_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的顺子加入列表
-                    return __use_bomb(card_list, card_2)  # 返回加入炸弹
+                    card_dict['顺子'] = __have_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的顺子加入字典
 
                 case '连对':
-                    card_list = __have_pair_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的连对加入列表
-                    return __use_bomb(card_list, card_2)  # 返回加入炸弹
+                    card_dict['连对'] = __have_pair_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的连对加入字典
+            return __use_bomb(card_dict, card_2)  # 返回加入炸弹
         case 2:
-            card_list = __have_bomb(card_2, ht['大小'])  # 把能管上的炸弹加入列表
-            card_list += __have_missile(card_2)  # 把所有导弹加入列表
-            card_list += __have_rocket(card_2)  # 把火箭加入列表
-            return card_list
+            card_dict['炸弹'] = __have_bomb(card_2, ht['大小'])  # 把能管上的炸弹加入字典
+            card_dict['导弹'] = __have_missile(card_2)  # 把所有导弹加入字典
+            card_dict['火箭'] = __have_rocket(card_2)  # 把火箭加入字典
+            return card_dict
 
         case 3:
-            card_list = __have_missile(card_2, ht['大小'])  # 把能管上的导弹加入列表
-            card_list += __have_rocket(card_2)  # 把火箭加入列表
-            return card_list
+            card_dict['导弹'] = __have_missile(card_2, ht['大小'])  # 把能管上的导弹加入列表
+            card_dict['火箭'] = __have_rocket(card_2)  # 把火箭加入列表
+            return card_dict
 
         case 4:
-            return []
+            return card_dict
         case _:
             return None
 
+
+def random_play_card(cards, ai=False):
+    card_list = []
+    match ai:
+        case True:
+            pass
+        case False:
+            if __have_pair_chain(cards):
+                card_list.append(__have_pair_chain(cards)[0])
+                return card_list
+            if __have_chain(cards):
+                card_list.append(__have_chain(cards)[0])
+                return card_list
+            if __have_pair(cards):
+                if __have_pair(cards)[0][0] == __card_to_num(cards, duplicate=True)[0]:
+                    card_list.append(__have_pair(cards)[0])
+                    return card_list
+            card_list.append((__card_to_num(cards, duplicate=True)[0]))
+
+    return card_list

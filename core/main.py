@@ -10,9 +10,10 @@ Create Date: 2021/11/18
 """
 import time
 
-from core.poker import *
 from core.utils import *
 from tests.cards import cards_generate
+from core.game import GameRound
+from core.player import Player
 import time
 
 
@@ -21,7 +22,11 @@ def run(debug=False):
     if debug:
         pass
 
-    card2 = PokerCard().shuffle(2)[:6]
-    print(card2)
-    card3 = random_play_card(card2)
-    print(card3)
+    for i in range(100000):
+        p1 = Player('玩家1')
+        p2 = Player('玩家2')
+        p3 = Player('玩家3')
+        p4 = Player('玩家4')
+        game = GameRound()
+        game.add_player(p1, p2, p3, p4)
+        game.start_game()

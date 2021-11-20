@@ -34,6 +34,30 @@ def __calc_card_level(card):
         return int(card[0])
 
 
+def __num_to_card_rank(cards):
+    """
+    将扑克牌数字列表转换为 rank 列表
+    :param cards: list 扑克牌数字列表
+    :return: list rank 列表
+    """
+    rank_dict = {
+        '11': 'J',
+        '12': 'Q',
+        '13': 'K',
+        '14': 'A',
+        '16': '2',
+        '18': 'black',
+        '19': 'red'
+    }
+    card_rank_list = []
+    for c in cards:
+        if str(c) in rank_dict:
+            card_rank_list.append(rank_dict[str(c)])
+        else:
+            card_rank_list.append(str(c))
+    return card_rank_list
+
+
 def __card_to_num(cards, m=0, duplicate=True):
     """
     将扑克牌对象转换为数字对象，并过滤掉不大于m的值
@@ -387,15 +411,12 @@ def random_play_card(cards, ai=False):
             pass
         case False:
             if __have_pair_chain(cards):
-                card_list.append(__have_pair_chain(cards)[0])
-                return card_list
-            if __have_chain(cards):
-                card_list.append(__have_chain(cards)[0])
-                return card_list
-            if __have_pair(cards):
+                card_list = (__have_pair_chain(cards)[0])
+            elif __have_chain(cards):
+                card_list = (__have_chain(cards)[0])
+            elif __have_pair(cards):
                 if __have_pair(cards)[0][0] == __card_to_num(cards, duplicate=True)[0]:
-                    card_list.append(__have_pair(cards)[0])
-                    return card_list
-            card_list.append((__card_to_num(cards, duplicate=True)[0]))
-
-    return card_list
+                    card_list = (__have_pair(cards)[0])
+            else:
+                card_list.append((__card_to_num(cards, duplicate=True)[0]))
+    return __num_to_card_rank(card_list)

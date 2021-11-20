@@ -8,10 +8,12 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/18
 -------------------------------------------------
 """
+import time
 
 from core.poker import *
 from core.utils import *
 from tests.cards import cards_generate
+import time
 
 
 # 运行程序
@@ -19,10 +21,13 @@ def run(debug=False):
     if debug:
         pass
     c = 0
+    t = time.time()
     while True:
-        cards = list(PokerCard().shuffle(2))[:13]
-        if have_pair(cards, 3)[0]:
-            print(sorted([calc_card_level(card) for card in cards]))
-            print(have_pair(cards, 3))
-            break
-
+        card1 = cards_generate(0)
+        assert hand_type(card1)
+        card2 = PokerCard().shuffle(2)[:14]
+        card_hint(card1, card2)
+        c += 1
+        if c % 10000 == 0:
+            print(c)
+            print(time.time()-t)

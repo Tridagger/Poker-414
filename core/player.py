@@ -11,4 +11,6 @@ Create Date: 2021/11/19
 
 
 class Player:
-    pass
+    def __init__(self):
+        self.name = ''
+

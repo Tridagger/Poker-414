@@ -64,7 +64,7 @@ def cards_generate(types=0):
 
         case 4:  # 生成连对
             start = random.randint(3, 12)
-            number = random.randint(3, 15 - start)
+            number = random.randint(3, 7 if 15-start > 7 else 15-start)
             for i in range(number):
                 suits = list(poker.PokerCard.suits)
                 card_list.append(poker.Card(card_dict[str(start + i)], random.choice(suits)))

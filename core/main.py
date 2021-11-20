@@ -22,11 +22,10 @@ def run(debug=False):
     if debug:
         pass
 
-    for i in range(100000):
-        p1 = Player('玩家1')
-        p2 = Player('玩家2')
-        p3 = Player('玩家3')
-        p4 = Player('玩家4')
-        game = GameRound()
-        game.add_player(p1, p2, p3, p4)
-        game.start_game()
+    p1 = Player('玩家1')
+    p2 = Player('玩家2')
+    p3 = Player('玩家3')
+    p4 = Player('玩家4')
+    game = GameRound()
+    game.add_player(p1, p2, p3, p4)
+    game.start_game()

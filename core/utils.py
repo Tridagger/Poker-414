@@ -8,7 +8,6 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/19
 -------------------------------------------------
 """
-import random
 from collections import Counter
 
 
@@ -280,8 +279,8 @@ def __have_chain(cards, m=2, n=3):
     for i in [16, 18, 19]:
         if i in cl:
             cl.remove(i)
-    for i in range(len(cl)-n+1):
-        cl_piece = cl[i: i+n]
+    for i in range(len(cl) - n + 1):
+        cl_piece = cl[i: i + n]
         if len(cl_piece) == (cl_piece[-1] - cl_piece[0] + 1):
             hcl.append(cl_piece)
     return hcl
@@ -299,7 +298,7 @@ def __have_pair_chain(cards, m=2, n=6):
     cl = __card_to_num(cards, m)
     cnt = Counter(cl)
     hcl = []
-    s = int(n/2)
+    s = int(n / 2)
     cl_copy = []
     for item in cl:
         if cnt[item] >= 2:
@@ -307,8 +306,8 @@ def __have_pair_chain(cards, m=2, n=6):
     cl_set = sorted(list(set(cl_copy)))
     if 16 in cl_set:
         cl_set.remove(16)
-    for i in range(len(cl_set)-s+1):
-        cl_piece = cl_set[i: i+s]
+    for i in range(len(cl_set) - s + 1):
+        cl_piece = cl_set[i: i + s]
         if len(cl_piece) == (cl_piece[-1] - cl_piece[0] + 1):
             cl_pieces = []
             for j in cl_piece:
@@ -353,7 +352,14 @@ def __use_bomb(card_dict, cards):
     return card_dict
 
 
-def card_hint(card_1, card_2):
+def __card_dict_to_card_rank_dict(card_dict):
+    for key, value in card_dict.items():
+        if value:
+            card_dict[key] = __num_to_card_rank(value)
+    return card_dict
+
+
+def card_hint(card_1, card_2):  # TODO:数字没转换成rank
     """
     出牌提示
     :param card_1: 被管的牌
@@ -386,17 +392,17 @@ def card_hint(card_1, card_2):
 
                 case '连对':
                     card_dict['连对'] = __have_pair_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的连对加入字典
-            return __use_bomb(card_dict, card_2)  # 返回加入炸弹
+            return __card_dict_to_card_rank_dict(__use_bomb(card_dict, card_2))  # 返回加入炸弹
         case 2:
             card_dict['炸弹'] = __have_bomb(card_2, ht['大小'])  # 把能管上的炸弹加入字典
             card_dict['导弹'] = __have_missile(card_2)  # 把所有导弹加入字典
             card_dict['火箭'] = __have_rocket(card_2)  # 把火箭加入字典
-            return card_dict
+            return __card_dict_to_card_rank_dict(card_dict)
 
         case 3:
             card_dict['导弹'] = __have_missile(card_2, ht['大小'])  # 把能管上的导弹加入列表
             card_dict['火箭'] = __have_rocket(card_2)  # 把火箭加入列表
-            return card_dict
+            return __card_dict_to_card_rank_dict(card_dict)
 
         case 4:
             return card_dict

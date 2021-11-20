@@ -8,6 +8,7 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/20
 -------------------------------------------------
 """
+import random
 
 from core.poker import PokerCard, Card
 from core.utils import *
@@ -18,7 +19,7 @@ class GameRound:
         self.players = []
         self.all_cards = PokerCard().shuffle(2)  # 生成一副新的扑克牌, 洗两次牌
         self.first = first  # 是否是第一局游戏
-        self.current_cards = []
+        self.current_cards = {'cards': [], 'player': None}
 
     def start_game(self, first=None):
         assert len(self.players) == 4  # 保证四个玩家
@@ -63,6 +64,13 @@ class GameRound:
     def __play_game(self):
         h3 = self.__who_has_heart_3()  # 判断红桃3在谁的手里
         self.__play_cards(h3)
+        while len(self.players) >= 2:
+            for player in self.players:
+                if player.turn:
+                    if player == self.current_cards['player']:
+                        self.__play_cards(player)
+                    else:
+                        self.__over_cards(player)
 
     def __play_cards(self, player):
         """
@@ -70,14 +78,24 @@ class GameRound:
         :param player: 玩家对象
         :return: None
         """
+        self.current_cards['cards'] = []
         played_cards = random_play_card(player.cards)
         for card in played_cards:
             for index, item in enumerate(player.cards):
                 if card == item[0]:
-                    self.current_cards.append(player.cards.pop(index))
+                    self.current_cards['cards'].append(player.cards.pop(index))
+                    self.current_cards['player'] = player
                     break
         p_index = self.players.index(player)
         if p_index == len(self.players) - 1:
             self.players[0].turn = True
         else:
-            self.players[p_index + 1] = True
+            self.players[p_index + 1].turn = True
+
+    def __over_cards(self, player):
+        played_cards = card_hint(self.current_cards['cards'], player.cards)
+        for key, value in played_cards.items():
+            if value:
+                print(played_cards[key][0])  # TODO:数字没转换成 rank
+                break
+        pass

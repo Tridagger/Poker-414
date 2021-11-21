@@ -78,7 +78,6 @@ class GameRound:
                     else:
                         self.__over_cards(player)
 
-
     def __play_cards(self, player):
         """
         随机出牌 玩家的手牌减少，出的牌更新到 self.current_cards 中

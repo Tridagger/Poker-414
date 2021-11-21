@@ -355,11 +355,12 @@ def __use_bomb(card_dict, cards):
 def __card_dict_to_card_rank_dict(card_dict):
     for key, value in card_dict.items():
         if value:
-            card_dict[key] = __num_to_card_rank(value)
+            for index, item in enumerate(value):
+                value[index] = __num_to_card_rank(item)
     return card_dict
 
 
-def card_hint(card_1, card_2):  # TODO:数字没转换成rank
+def card_hint(card_1, card_2):
     """
     出牌提示
     :param card_1: 被管的牌
@@ -423,6 +424,26 @@ def random_play_card(cards, ai=False):
             elif __have_pair(cards):
                 if __have_pair(cards)[0][0] == __card_to_num(cards, duplicate=True)[0]:
                     card_list = (__have_pair(cards)[0])
+                else:
+                    card_list.append(__card_to_num(cards, duplicate=True)[0])
             else:
-                card_list.append((__card_to_num(cards, duplicate=True)[0]))
+                card_list.append(__card_to_num(cards, duplicate=True)[0])
     return __num_to_card_rank(card_list)
+
+
+def post_cards(post_card_list, hand_card):
+    """
+    出牌，将手牌中和出牌列表相同的元素剔除出去
+    :param post_card_list: 出牌列表
+    :param hand_card: 手牌
+    :return: 剩余的手牌， 打出的牌
+    """
+    after_card = []
+    for card in hand_card:
+        if card[0] in post_card_list:
+            after_card.append(card)
+            post_card_list.remove(card[0])
+            if not post_card_list:
+                break
+    hand_card = list(set(hand_card)-set(after_card))
+    return hand_card, after_card

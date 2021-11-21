@@ -8,7 +8,7 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/19
 -------------------------------------------------
 """
-from collections import Counter
+from collections import Counter, OrderedDict
 
 
 def __calc_card_level(card):
@@ -368,30 +368,26 @@ def card_hint(card_1, card_2):
     :return: dict 所有出牌方法的集合
     """
     ht = hand_type(card_1)
-    card_dict = {
-        '单牌': [],
-        '对牌': [],
-        '顺子': [],
-        '连对': [],
-        '炸弹': [],
-        '导弹': [],
-        '火箭': []
-    }
+    card_dict = OrderedDict()
     match ht['等级']:
         case 1:
             match ht['牌型']:
                 case '单牌':
+                    card_dict['单牌'] = []
                     sl = __card_to_num(card_2, ht['大小'], duplicate=False)  # 把能管上的单牌加入字典
                     for i in sl:
                         card_dict['单牌'].append([i])  # 封装成列表 保持统一
 
                 case '对牌':
+                    card_dict['对牌'] = []
                     card_dict['对牌'] = __have_pair(card_2, ht['大小'])  # 把能管上的对牌加入字典
 
                 case '顺子':
+                    card_dict['顺子'] = []
                     card_dict['顺子'] = __have_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的顺子加入字典
 
                 case '连对':
+                    card_dict['连对'] = []
                     card_dict['连对'] = __have_pair_chain(card_2, ht['大小'], ht['牌数'])  # 把能管上的连对加入字典
             return __card_dict_to_card_rank_dict(__use_bomb(card_dict, card_2))  # 返回加入炸弹
         case 2:

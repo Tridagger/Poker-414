@@ -412,6 +412,12 @@ def card_hint(card_1, card_2):
 
 
 def random_play_card(cards, ai=False):
+    """
+    随机出牌
+    :param cards: 手牌列表
+    :param ai: 是否开启智能模式  暂不支持
+    :return: 出牌列表
+    """
     card_list = []
     match ai:
         case True:

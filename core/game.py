@@ -15,21 +15,24 @@ from core.utils import *
 
 
 class GameRound:
-    def __init__(self, first=True):
+    def __init__(self):
         self.static_players = []
         self.players = []
         self.all_cards = PokerCard().shuffle(2)  # 生成一副新的扑克牌, 洗两次牌
-        self.first = first  # 是否是第一局游戏
         self.current_cards = {'cards': [], 'player': None}
 
-    def start_game(self, first=None):
+    def start_game(self):
         assert len(self.players) == 4  # 保证四个玩家
-        if self.first:
-            if not first:
-                random.choice(self.players).king = True  # 随机一个人先抓牌
-            else:
-                first.king = True
+        have_king = False
+        for player in self.players:
+            if player.king:
+                have_king = True
+        if not have_king:
+            random.choice(self.players).king = True  # 随机一个人先抓牌
 
+        for player in self.players:
+            player.clean_up()  # 清空手里的牌
+            player.turn = False
         self.__distribute_cards()  # 发牌
         self.__play_game()
 
@@ -75,6 +78,7 @@ class GameRound:
                     else:
                         self.__over_cards(player)
 
+
     def __play_cards(self, player):
         """
         随机出牌 玩家的手牌减少，出的牌更新到 self.current_cards 中
@@ -85,17 +89,7 @@ class GameRound:
         self.current_cards['player'] = player
         played_cards = random_play_card(player.cards)
         player.cards, self.current_cards['cards'] = post_cards(played_cards, player.cards)
-        p_index = self.players.index(player)
-        if p_index == len(self.players) - 1:
-            self.players[0].turn = True
-        else:
-            self.players[p_index + 1].turn = True
-        if len(player.cards) == 0:
-            if p_index == len(self.players) - 1:
-                self.current_cards['player'] = self.players[0]
-            else:
-                self.current_cards['player'] = self.players[p_index + 1]
-            self.players.remove(player)
+        self.__is_blank(player)
 
     def __over_cards(self, player):
         over = False
@@ -111,11 +105,21 @@ class GameRound:
         else:
             pass
             # print(f"{player.name}管不起: Pass！")
+        self.__is_blank(player)
+
+    def __is_blank(self, player):
         p_index = self.players.index(player)
         if p_index == len(self.players) - 1:
             self.players[0].turn = True
         else:
             self.players[p_index + 1].turn = True
+
         if len(player.cards) == 0:
-            # print(f"\n{player}没牌了！\n")
+            if p_index == len(self.players) - 1:
+                self.current_cards['player'] = self.players[0]
+            else:
+                self.current_cards['player'] = self.players[p_index + 1]
+            if len(self.players) == 4:
+                player.king = True
+                player.win_times += 1
             self.players.remove(player)

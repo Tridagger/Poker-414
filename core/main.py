@@ -22,13 +22,13 @@ import time
 def run(debug=False):
     if debug:
         pass
-
-    for i in range(1000000):
-        p1 = Player('玩家1')
-        p2 = Player('玩家2')
-        p3 = Player('玩家3')
-        p4 = Player('玩家4')
+    p1 = Player('玩家1')
+    p2 = Player('玩家2')
+    p3 = Player('玩家3')
+    p4 = Player('玩家4')
+    for i in range(1000000000):
         game = GameRound()
         game.add_player(p1, p2, p3, p4)
         game.start_game()
-        print(i)
+        print(f"第{i+1}局结束")
+    print(p1.win_times, p2.win_times, p3.win_times, p4.win_times)

@@ -360,13 +360,15 @@ def __card_dict_to_card_rank_dict(card_dict):
     return card_dict
 
 
-def card_hint(card_1, card_2):
+def card_hint(card_1, card_2, ai=False):
     """
     出牌提示
+    :param ai: 只能选牌
     :param card_1: 被管的牌
     :param card_2: 手牌
     :return: dict 所有出牌方法的集合
     """
+    print(not ai)
     ht = hand_type(card_1)
     card_dict = OrderedDict()
     match ht['等级']:
@@ -416,9 +418,20 @@ def random_play_card(cards, ai=False):
     """
     card_list = []
     match ai:
-        case True:
-            pass
-        case False:
+        case True:  # 智能出牌
+            # if __have_pair_chain(cards):
+            #     card_list = (__have_pair_chain(cards)[0])
+            # elif __have_chain(cards):
+            #     card_list = (__have_chain(cards)[0])
+            # elif __have_pair(cards):
+            #     if __have_pair(cards)[0][0] == __card_to_num(cards, duplicate=True)[0]:
+            #         card_list = (__have_pair(cards)[0])
+            #     else:
+            #         card_list.append(__card_to_num(cards, duplicate=True)[0])
+            # else:
+            card_list.append(__card_to_num(cards, duplicate=True)[0])
+
+        case False:  # 智障出牌
             if __have_pair_chain(cards):
                 card_list = (__have_pair_chain(cards)[0])
             elif __have_chain(cards):
@@ -447,5 +460,5 @@ def post_cards(post_card_list, hand_card):
             post_card_list.remove(card[0])
             if not post_card_list:
                 break
-    hand_card = list(set(hand_card)-set(after_card))
+    hand_card = list(set(hand_card) - set(after_card))
     return hand_card, after_card

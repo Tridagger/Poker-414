@@ -23,9 +23,9 @@ def run(debug=False):
     if debug:
         pass
 
-    n = 100
+    n = 1000
 
-    p1 = Player('玩家1')
+    p1 = Player('玩家1', ai=True)
     p2 = Player('玩家2')
     p3 = Player('玩家3')
     p4 = Player('玩家4')

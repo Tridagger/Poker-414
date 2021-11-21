@@ -9,7 +9,6 @@ Create Date: 2021/11/20
 -------------------------------------------------
 """
 import random
-import time
 from core.poker import PokerCard, Card
 from core.utils import *
 
@@ -69,7 +68,7 @@ class GameRound:
                 return player
 
     def __play_game(self):
-        h3 = self.__who_has_heart_3()  # 红桃3 设置牌权
+        self.__who_has_heart_3()  # 红桃3 设置牌权
         while len(self.players) > 1:
             for player in self.players:
                 if player.turn:
@@ -86,13 +85,19 @@ class GameRound:
         """
         self.current_cards['cards'] = []
         self.current_cards['player'] = player
-        played_cards = random_play_card(player.cards)
+        if player.ai:
+            played_cards = random_play_card(player.cards, ai=True)
+        else:
+            played_cards = random_play_card(player.cards)
         player.cards, self.current_cards['cards'] = post_cards(played_cards, player.cards)
         self.__is_blank(player)
 
     def __over_cards(self, player):
         over = False
-        played_cards = card_hint(self.current_cards['cards'], player.cards)
+        if player.ai:
+            played_cards = card_hint(self.current_cards['cards'], player.cards, ai=True)
+        else:
+            played_cards = card_hint(self.current_cards['cards'], player.cards)
         for key, value in played_cards.items():
             if value:
                 over = True

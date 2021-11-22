@@ -23,16 +23,16 @@ def run(debug=False):
     if debug:
         pass
 
-    n = 1000
+    path = f"../logs/game_record_{time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))}.txt"
+    for i in range(100):
+        p1 = Player('玩家1', ai=True)
+        p2 = Player('玩家2')
+        p3 = Player('玩家3')
+        p4 = Player('玩家4')
 
-    p1 = Player('玩家1', ai=True)
-    p2 = Player('玩家2')
-    p3 = Player('玩家3')
-    p4 = Player('玩家4')
-    for i in range(n):
-        game = GameRound()
+        game = GameRound(path=path)
         game.add_player(p1, p2, p3, p4)
-        game.start_game()
-        print(f"第{i+1}局结束")
-    print(p1.win_times/n, p2.win_times/n, p3.win_times/n, p4.win_times/n)
+        game.start_game(log=True)
+        print(f"第i局结束")
+
 

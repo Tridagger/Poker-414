@@ -368,7 +368,6 @@ def card_hint(card_1, card_2, ai=False):
     :param card_2: 手牌
     :return: dict 所有出牌方法的集合
     """
-    print(not ai)
     ht = hand_type(card_1)
     card_dict = OrderedDict()
     match ht['等级']:

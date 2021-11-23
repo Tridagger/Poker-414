@@ -92,6 +92,8 @@ class GameRound:
                 f.write(f"红桃3在{h3.name}手中！{h3.name}先出牌！\n\n")
         while len(self.players) > 1:
             for player in self.players:
+                with open(self.path, 'a+', encoding='utf-8') as f:
+                    f.write(f"牌堆上是{self.current_cards['player'].name}的牌\n")
                 if player.turn:
                     if player == self.current_cards['player']:
                         self.__play_cards(player)
@@ -132,7 +134,10 @@ class GameRound:
             if value:
                 over = True
                 player.cards, self.current_cards['cards'] = post_cards(value[0], player.cards)
+                self.current_cards['player'] = player
                 break
+
+        # 记录到文件
         if over and self.log:
             with open(self.path, 'a+', encoding='utf-8') as f:
                 f.write(f"{player.name}管了: {self.current_cards['cards']}\n")

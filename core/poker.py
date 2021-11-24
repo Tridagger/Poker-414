@@ -5,14 +5,19 @@ Project Name: Poker-414
 File Name: poker.py
 Author: Tridagger
 Email: san.limeng@qq.com
-Create Date: 2021/11/18
+Create Date: 2021/11/24
 -------------------------------------------------
 """
 
 import collections
 import random
 
-Card = collections.namedtuple('Poker', ['rank', 'suit', 'level'])  # 定义单张扑克牌
+
+class Card(collections.namedtuple('Poker', ['rank', 'suit', 'level'])):  # 定义单张扑克牌
+    def __repr__(self):
+        if self.suit in ['红桃', '方片', 'Red']:
+            return f'\033[1;31m{self.suit}-{self.rank}\033[0m'
+        return f'{self.suit}-{self.rank}'
 
 
 class PokerCard:
@@ -23,7 +28,7 @@ class PokerCard:
     # 列表生成式，牌大小
     ranks = list(str(n) for n in range(2, 11)) + ['J', 'Q', 'K', 'A']
     # 牌花色
-    suits = ['♥红桃', '♠黑桃', '♦方片', '♣梅花']
+    suits = ['红桃', '黑桃', '方片', '梅花']
 
     rank_to_level = {
         '3': 3,
@@ -45,7 +50,7 @@ class PokerCard:
         # 列表生成式
         # 创建对象时自动赋值_cards
         self._cards = [Card(rank, suit, self.rank_to_level[rank]) for suit in self.suits for rank in self.ranks] \
-                      + [Card('B', 'Joker', 18), Card('R', 'Joker', 20)]
+                      + [Card('Joker', 'Black', 18), Card('Joker', 'Red', 20)]
 
     def __len__(self):
         return len(self._cards)
@@ -62,10 +67,3 @@ class PokerCard:
         for i in range(n):
             random.shuffle(self._cards)
         return self._cards
-
-
-cards = PokerCard()
-
-for i in cards:
-    print(i, i.suit)
-    print(f"\033[1;31m\t{i.suit}\033[0m")

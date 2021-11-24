@@ -15,12 +15,20 @@ from core.player import Player
 from core.poker import *
 from core.server import game_server
 from threading import Thread
+from core.tools import *
 
 
 # 运行程序
 def run(debug=False):
     if debug:
         pass
-    game_server.serve_forever()
+
+
+    a = PokerCard()
+
+    c = list(a)
+    b = [c[2], c[15], c[12]]
+    print(b)
+    print(is_rocket(b))
 
 

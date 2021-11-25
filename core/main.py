@@ -23,12 +23,10 @@ def run(debug=False):
     if debug:
         pass
 
-
-    a = PokerCard()
-
+    a = PokerCard().shuffle()
     c = list(a)
-    b = [c[2], c[15], c[12]]
-    print(b)
-    print(is_rocket(b))
+    b = c[0:14]
+    print(sort_card(b))
+    print(have_solo(b,10))
 
 

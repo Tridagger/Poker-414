@@ -87,8 +87,9 @@ class GameRound:
         #         self.h3_team.append(player.echo())
         #     if player.find_flag:
         #         player.find()
-        print(self.h3_team)
-        print(self.not_h3_team)
+        self.publicise()
+        for player in self.players:
+            print(player, player.friend, player.enemy)
 
     def add_player(self, *args):
         self.players = list(args)
@@ -105,3 +106,6 @@ class GameRound:
                     player.cards.append(self.all_cards.pop(0))
 
     def publicise(self):
+        for player in self.players:
+            player.get_info(self.h3_team, self.not_h3_team)
+

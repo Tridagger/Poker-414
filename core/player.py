@@ -100,3 +100,12 @@ class Player:
     def find(self, team_info):  # 寻找
         pass
 
+    def get_info(self, *team_info):
+        if self.h3:
+            self.friend = list(set(team_info[0]) - {self})
+            self.enemy = team_info[1]
+        elif self.echo_flag:
+            self.enemy = team_info[1]
+        else:
+            self.friend = list(set(team_info[1]) - {self})
+            self.enemy = team_info[0]

@@ -23,10 +23,12 @@ def run(debug=False):
     if debug:
         pass
 
-    c = PokerCard()
-    cards = c[1:4]
-    print(cards)
 
-    print(is_chain(cards))
+    a = PokerCard()
+
+    c = list(a)
+    b = [c[2], c[15], c[12]]
+    print(b)
+    print(is_rocket(b))
 
 

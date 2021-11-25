@@ -9,19 +9,13 @@ Create Date: 2021/11/24
 -------------------------------------------------
 """
 
-# def __card_to_num(cards, m=0, duplicate=True):
-#     """
-#     将扑克牌对象转换为数字对象，并过滤掉不大于m的值
-#     :param cards: 扑克列表
-#     :param m: 过滤参数
-#     :param duplicate: 是否去重排序
-#     :return: 数字列表
-#     """
-#     cl = sorted([__calc_card_level(card) for card in cards])
-#     cl_after = list(filter(lambda x: x > m, cl))
-#     if not duplicate:
-#         cl_after = sorted(list(set(cl_after)))
-#     return cl_after
+
+def remove_duplicate_card(cards):
+    new_cards = []
+    for card in cards:
+        if card.level not in [c.level for c in new_cards]:
+            new_cards.append(card)
+    return sorted(new_cards, key=lambda cd: cd.level)
 
 
 def is_solo(cards):
@@ -51,12 +45,32 @@ def is_chain(cards):
     :param cards: List类型，扑克牌列表
     :return: True：是顺子，最小牌点数   False不是顺子
     """
+    assert isinstance(cards, list) and 3 <= len(cards) == len(remove_duplicate_card(cards))
+    return len(cards) == (cards[-1].level - cards[0].level + 1), cards[0].level, len(cards)
+
+
+def is_dual_chain(cards):
     assert isinstance(cards, list)
-    level_list = sorted([card.level for card in cards])
-    assert 3 <= len(cards) == len(level_list)
-    level_list = sorted([card.level for card in cards])
-    print(level_list)
-    # if len(cards) == (cards[-1] - cards[0] + 1):
-    #     return True, 0
-    # else:
-    #     return False, 0
+    cl = sorted(cards, key=lambda cd: cd.level)
+    cs = remove_duplicate_card(cards)
+    assert len(cards) >= 6 and len(cards) == len(cs) * 2
+    for i in range(len(cs)):
+        assert cl[i * 2].level == cl[i * 2 + 1].level
+    return len(cs) == (cs[-1].level - cs[0].level + 1), len(cards), cs[0].level
+
+
+def is_bomb(cards):
+    assert isinstance(cards, list)
+    return len(cards) == 3 and len(remove_duplicate_card(cards)) == 1, cards[0].level, 3
+
+
+def is_missile(cards):
+    assert isinstance(cards, list)
+    return len(cards) == 4 and len(remove_duplicate_card(cards)) == 1, cards[0].level, 4
+
+
+def is_rocket(cards):
+    assert isinstance(cards, list)
+    assert len(cards) == 3
+    cl = sorted([c.level for c in cards])
+    return cl == [4, 4, 14], 99, 3

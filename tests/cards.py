@@ -46,12 +46,12 @@ def cards_generate(types=0):
         case 2:  # 生成对牌
             card_list.append(random.choice(cards))
             card1 = card_list[0]
-            if card1[0] == 'red' or card1[0] == 'black':
-                card_list = [poker.Card('red', 'Joker'), poker.Card('black', 'Joker')]
+            if card1[0] == '王':
+                card_list = [poker.Card('王', '小', 18), poker.Card('王', '大', 20)]
             else:
                 suits = list(poker.PokerCard.suits)
                 suits.pop(suits.index(card1[1]))
-                card_list.append(poker.Card(card1[0], random.choice(suits)))
+                card_list.append(poker.Card(card1[0], random.choice(suits), card1.level))
             return card_list
 
         case 3:  # 生成顺子
@@ -59,7 +59,7 @@ def cards_generate(types=0):
             number = random.randint(3, 15-start)
             suits = list(poker.PokerCard.suits)
             for i in range(number):
-                card_list.append(poker.Card(card_dict[str(start+i)], random.choice(suits)))
+                card_list.append(poker.Card(card_dict[str(start+i)], random.choice(suits), start+i))
             return card_list
 
         case 4:  # 生成连对
@@ -67,9 +67,9 @@ def cards_generate(types=0):
             number = random.randint(3, 7 if 15-start > 7 else 15-start)
             for i in range(number):
                 suits = list(poker.PokerCard.suits)
-                card_list.append(poker.Card(card_dict[str(start + i)], random.choice(suits)))
+                card_list.append(poker.Card(card_dict[str(start + i)], random.choice(suits), start + i))
                 suits.pop(suits.index(card_list[i*2][1]))
-                card_list.append(poker.Card(card_dict[str(start + i)], random.choice(suits)))
+                card_list.append(poker.Card(card_dict[str(start + i)], random.choice(suits), start + i))
             return card_list
 
         case 5:  # 生成炸弹
@@ -78,7 +78,7 @@ def cards_generate(types=0):
             suits = list(poker.PokerCard.suits)
             for i in range(2):
                 suits.pop(suits.index(card_list[i][1]))
-                card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
+                card_list.append(poker.Card(card_list[0][0], random.choice(suits), card_list[0].level))
             return card_list
 
         case 6:  # 生成导弹
@@ -87,15 +87,15 @@ def cards_generate(types=0):
             suits = list(poker.PokerCard.suits)
             for i in range(3):
                 suits.pop(suits.index(card_list[i][1]))
-                card_list.append(poker.Card(card_list[0][0], random.choice(suits)))
+                card_list.append(poker.Card(card_list[0][0], random.choice(suits), card_list[0].level))
             return card_list
 
         case 7:  # 生成火箭
             suits = list(poker.PokerCard.suits)
-            card_list.append(poker.Card('A', random.choice(suits)))
-            card_list.append(poker.Card('4', random.choice(suits)))
+            card_list.append(poker.Card('A', random.choice(suits), 14))
+            card_list.append(poker.Card('4', random.choice(suits), 4))
             suits.pop(suits.index(card_list[1][1]))
-            card_list.append(poker.Card('4', random.choice(suits)))
+            card_list.append(poker.Card('4', random.choice(suits), 4))
             random.shuffle(card_list)
             return card_list
 

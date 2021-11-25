@@ -15,6 +15,7 @@ from core.player import Player
 from core.poker import *
 from core.server import game_server
 from threading import Thread
+from tests.cards import cards_generate
 from core.tools import *
 
 
@@ -23,10 +24,11 @@ def run(debug=False):
     if debug:
         pass
 
+    # d = cards_generate(0)
     a = PokerCard().shuffle()
     c = list(a)
-    b = c[0:14]
+    b = c[0:3]
     print(sort_card(b))
-    print(have_solo(b,10))
+    print(play_cards(b))
 
 

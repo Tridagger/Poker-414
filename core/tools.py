@@ -13,6 +13,8 @@ from core.poker import PokerCard
 
 
 def sort_card(cards):
+    if not cards:
+        return []
     if isinstance(cards[0], list):
         return sorted(cards, key=lambda cd: cd[0].level)
     else:
@@ -28,21 +30,11 @@ def remove_duplicate_card(cards, m=2):
 
 
 def is_solo(cards):
-    """
-    判断是否为单牌
-    :param cards: list类型，扑克牌列表
-    :return: True是单牌，最小牌点数   False不是单牌
-    """
     assert isinstance(cards, list)
     return len(cards) == 1, cards[0].level
 
 
 def is_pair(cards):
-    """
-    判断是否为对牌
-    :param cards: List类型，扑克牌列表
-    :return: True：是对牌，最小牌点数   False不是对牌
-    """
     assert isinstance(cards, list)
     if len(cards) == 2:
         return cards[0].rank == cards[1].rank, cards[0].level, 2
@@ -51,14 +43,10 @@ def is_pair(cards):
 
 
 def is_chain(cards):
-    """
-    判断是否为顺子
-    :param cards: List类型，扑克牌列表
-    :return: True：是顺子，最小牌点数   False不是顺子
-    """
     assert isinstance(cards, list)
-    if 3 <= len(cards) == len(remove_duplicate_card(cards)):
-        return len(cards) == (cards[-1].level - cards[0].level + 1), cards[0].level, len(cards)
+    rd_cards = remove_duplicate_card(cards)
+    if 3 <= len(cards) == len(rd_cards):
+        return len(rd_cards) == (rd_cards[-1].level - rd_cards[0].level + 1), rd_cards[0].level, len(rd_cards)
     else:
         return False, 0, 0
 
@@ -71,7 +59,7 @@ def is_dual_chain(cards):
         for i in range(len(cs)):
             if cl[i * 2].level != cl[i * 2 + 1].level:
                 return False, 0, 0
-        return len(cs) == (cs[-1].level - cs[0].level + 1), len(cards), cs[0].level
+        return len(cs) == (cs[-1].level - cs[0].level + 1), cs[0].level, len(cards)
     else:
         return False, 0, 0
 
@@ -104,7 +92,7 @@ def cards_type(cards):
         return {"牌型": "导弹", "等级": 3, "牌数": 4, "大小": is_missile(cards)[1]}
     elif is_chain(cards)[0]:
         return {"牌型": "顺子", "等级": 1, "牌数": is_chain(cards)[2], "大小": is_chain(cards)[1]}
-    elif is_dual_chain(cards):
+    elif is_dual_chain(cards)[0]:
         return {"牌型": "连对", "等级": 1, "牌数": is_dual_chain(cards)[2], "大小": is_dual_chain(cards)[1]}
     elif is_rocket(cards)[0]:
         return {"牌型": "火箭", "等级": 4, "牌数": 3, "大小": is_rocket(cards)[1]}
@@ -124,42 +112,42 @@ def cards_compare(cards1, cards2):
 
 def have_rocket(cards):
     if len(cards) < 3:
-        return False
+        return []
     have_four = set(cards) & set(PokerCard.cards['4'])
     have_ace = set(cards) & set(PokerCard.cards['14'])
     if len(have_four) >= 2 and len(have_ace) >= 1:
-        return [have_four.pop(), have_ace.pop(), have_four.pop()]
+        return [[have_four.pop(), have_ace.pop(), have_four.pop()]]
     else:
-        return False
+        return []
 
 
-def have_missile(cards, m=2):
+def have_missile(cards, m=2, n=4):
     if len(cards) < 3:
-        return False
+        return []
     level_list = [c.level for c in cards if c.level > m]
     cnt = Counter(level_list)
     cards_list = []
     for c in cnt:
-        if cnt[c] == 4:
+        if cnt[c] == n:
             cards_list.append(PokerCard.cards[str(c)])
     return sort_card(cards_list)
 
 
-def have_bomb(cards, m=2):
+def have_bomb(cards, m=2, n=3):
     if len(cards) < 4:
-        return False
+        return []
     cards_list = []
     level_list = [c.level for c in cards if c.level > m]
     cnt = Counter(level_list)
     for c in cnt:
-        if cnt[c] >= 3:
+        if cnt[c] >= n:
             cards_list.append(list(set(cards) & set(PokerCard.cards[str(c)]))[0:3])
     return sort_card(cards_list)
 
 
 def have_chain(cards, m=2, n=3):
     if len(cards) < n:
-        return False
+        return []
     cards_list = []
     out_cards = PokerCard.cards['16'] + PokerCard.cards['18'] + PokerCard.cards['20']
     cards = list(set(cards) - set(out_cards))
@@ -176,7 +164,7 @@ def have_dual_chain(cards, m=2, n=6):
     out_cards = PokerCard.cards['16'] + PokerCard.cards['18'] + PokerCard.cards['20']
     cards = list(set(cards) - set(out_cards))
     if len(cards) < n:
-        return False
+        return []
     level_list = [c.level for c in cards if c.level > m]
     cnt = Counter(level_list)
     dual_cards = []
@@ -185,7 +173,7 @@ def have_dual_chain(cards, m=2, n=6):
             cl = list(set(cards) & set(PokerCard.cards[str(c)]))
             dual_cards += cl[0:2]
     if len(dual_cards) < n:
-        return False
+        return []
     dual_cards = sort_card(dual_cards)
     for i in range(0, len(dual_cards)-n+1, 2):
         cards_piece = dual_cards[i:i+n]
@@ -194,10 +182,10 @@ def have_dual_chain(cards, m=2, n=6):
     return cards_list
 
 
-def have_pair(cards, m=2):
+def have_pair(cards, m=2, n=2):
     cards_list = []
-    if len(cards) < 2:
-        return False
+    if len(cards) < n:
+        return []
     level_list = [c.level for c in cards if c.level > m]
     cnt = Counter(level_list)
     for c in cnt:
@@ -208,12 +196,44 @@ def have_pair(cards, m=2):
     return sort_card(cards_list)
 
 
-def have_solo(cards, m=2):
-    cards_list = []
+def have_solo(cards, m=2, n=1):
+    cards_list = [] * n
     single_list = remove_duplicate_card(cards, m)
     for card in single_list:
         cards_list.append([card])
     return sort_card(cards_list)
 
 
+def cards_hint(cards1, cards2):
+    assert cards_type(cards1)
+    ct = cards_type(cards1)
+    cards_list = []
+    if ct['牌型'] == '火箭':
+        return []
+    hint_dict = {'单牌': have_solo,
+                 '对牌': have_pair,
+                 '顺子': have_chain,
+                 '连对': have_dual_chain,
+                 '炸弹': have_bomb,
+                 '导弹': have_missile}
+    cards_list += hint_dict[ct['牌型']](cards2, ct['大小'], ct['牌数'])
+    if ct['等级'] == 1:
+        cards_list += hint_dict['炸弹'](cards2)
+        cards_list += hint_dict['导弹'](cards2)
+        cards_list += have_rocket(cards2)
+    elif ct['等级'] == 2:
+        cards_list += hint_dict['导弹'](cards2)
+        cards_list += have_rocket(cards2)
+    elif ct['等级'] == 3:
+        cards_list += have_rocket(cards2)
+    return cards_list
 
+
+def play_cards(cards):
+    if have_dual_chain(cards):
+        return have_dual_chain(cards)[0]
+    elif have_chain(cards):
+        return have_chain(cards)[0]
+    elif have_pair(cards):
+        return have_pair(cards)[0]
+    return [sort_card(cards)[0]]

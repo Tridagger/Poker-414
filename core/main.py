@@ -25,10 +25,10 @@ def run(debug=False):
     if debug:
         pass
     path = '../logs/log.txt'
-    p1 = Player('player-1')
-    p2 = Player('player-2')
-    p3 = Player('player-3')
-    p4 = Player('player-4')
+    p1 = Player('玩家1')
+    p2 = Player('玩家2')
+    p3 = Player('玩家3')
+    p4 = Player('玩家4')
     game = GameRound(path)
     game.add_player(p1, p2, p3, p4)
     game.start_game(log=True)

@@ -24,11 +24,13 @@ def run(debug=False):
     if debug:
         pass
 
-    # d = cards_generate(0)
+    p1 = Player('P1')
+    d = cards_generate(0)
     a = PokerCard().shuffle()
     c = list(a)
-    b = c[0:3]
-    print(sort_card(b))
-    print(play_cards(b))
-
+    p1.cards = c[0:14]
+    print(p1.cards)
+    print(d)
+    print(p1.over_cards(d))
+    print(p1.cards)
 

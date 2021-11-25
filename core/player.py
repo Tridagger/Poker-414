@@ -94,12 +94,9 @@ class Player:
     def __repr__(self):
         return self.name
 
-    def echo(self):  # 吱声
-        if self.friend:
-            print(self, '可以吱声')
-            return self
+    def echo(self, team_info):  # 吱声
+        pass
 
-    def find(self):  # 寻找
-        if len(self.enemy) == 1:
-            print(self, '可以找人')
-            return self.enemy[0]
+    def find(self, team_info):  # 寻找
+        pass
+

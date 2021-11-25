@@ -21,6 +21,8 @@ class GameRound:
         self.log = False
         self.h3 = None
         self.friends_card = None
+        self.h3_team = []
+        self.not_h3_team = []
 
     def start_game(self, log=False):
         assert len(self.players) == 4  # 保证四个玩家
@@ -58,6 +60,7 @@ class GameRound:
         for player in self.players:
             if player.have_h3():
                 self.h3 = player
+                self.h3_team.append(self.h3)
                 break
         if self.log:
             with open(self.path, 'a+', encoding='GBK') as f:
@@ -70,14 +73,22 @@ class GameRound:
                 f.write(f"{self.h3.name}要了：{self.friends_card}\n")
         for player in self.players:
             player.set_friends_card(self.friends_card)
+            if player.echo_flag:
+                self.h3_team.append(player)
+            if player.find_flag:
+                self.not_h3_team.append(player)
             if self.log:
                 with open(self.path, 'a+', encoding='GBK') as f:
                     f.write(f"{player.name}的同伙：{player.friend}，{player.name}的敌人：{player.enemy}\n")
 
         # 测试吱声
-        for player in self.players:
-            player.echo()
-            player.find()
+        # for player in self.players:
+        #     if player.echo_flag:
+        #         self.h3_team.append(player.echo())
+        #     if player.find_flag:
+        #         player.find()
+        print(self.h3_team)
+        print(self.not_h3_team)
 
     def add_player(self, *args):
         self.players = list(args)
@@ -92,3 +103,5 @@ class GameRound:
                         p.king = True
                     assert self.all_cards
                     player.cards.append(self.all_cards.pop(0))
+
+    def publicise(self):

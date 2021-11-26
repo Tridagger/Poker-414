@@ -26,6 +26,7 @@ class Player:
         self.robot = robot  # 玩家是否是机器人
         self.friend = []  # 玩家的同伙
         self.enemy = []  # 玩家的敌人
+        self.team = []  # 玩家的队伍
         self.h3 = False
         self.friends_card = None
         self.echo_flag = False
@@ -68,7 +69,7 @@ class Player:
         self.cards = tools.sort_card(self.cards)
 
     def make_friends(self):
-        if random.randint(1, 1) == 1:
+        if random.randint(1, 5) == 1:
             friends_card = random.choice(poker.PokerCard.cards['14'])
         else:
             friends_card = random.choice(list(set(poker.PokerCard.cards['14']) - set(self.cards)))
@@ -95,7 +96,7 @@ class Player:
         return self.name
 
     def answer(self, player):
-        if random.randint(1, 3) == 1:
+        if random.randint(1, 1) == 1:
             return self
         else:
             return player
@@ -104,13 +105,15 @@ class Player:
         if self in team_info[0]:
             self.friend = list(set(team_info[0]) - {self})
             self.enemy = team_info[1]
+            self.team = team_info[0]
         else:
             self.friend = list(set(team_info[1]) - {self})
             self.enemy = team_info[0]
+            self.team = team_info[1]
 
     @staticmethod
     def top_dog():
-        if random.randint(1, 20) == 1:
+        if random.randint(1, 10) == 1:
             return True
 
     def my_turn(self, **kwargs):
@@ -118,13 +121,10 @@ class Player:
         player = kwargs['player']
         if player is None or player == self:
             out_cards = self.play_cards()
-            print(self, '出牌', out_cards, len(self.cards))
             return {'cards': out_cards, 'player': self}
         else:
             out_cards = self.over_cards(cards)
             if out_cards:
-                print(self, '要牌', out_cards[0], len(self.cards))
                 return {'cards': out_cards[0], 'player': self}
             else:
-                print(self, '要不起', out_cards, len(self.cards))
                 return kwargs

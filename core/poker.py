@@ -16,7 +16,8 @@ import random
 class Card(collections.namedtuple('Poker', ['rank', 'suit', 'level'])):  # 定义单张扑克牌
     def __repr__(self):
         if self.suit in ['红桃', '方片', '大']:
-            return f'\033[1;31m{self.suit}{self.rank}\033[0m'
+            # return f'\033[1;31m{self.suit}{self.rank}\033[0m'
+            return f'{self.suit}{self.rank}'
         return f'{self.suit}{self.rank}'
 
 

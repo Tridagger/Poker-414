@@ -111,27 +111,11 @@ class GameRound:
         self.first_turn()
 
         # 后续出牌
-        if not self.stop:
-            if self.log:
-                with open(self.path, 'a+', encoding='GBK') as f:
-                    f.write(f"\n后续出牌！\n")
-            while not self.player_out:
-                for player in self.players:
-                    self.turn_cards(player)
-                    if self.log:
-                        with open(self.path, 'a+', encoding='GBK') as f:
-                            if player == self.current_cards['player']:
-                                print(self.current_cards)
-                                f.write(f"{player}出了{self.current_cards['cards']} 剩余：{len(player.cards)}张牌！\n")
-                            else:
-                                f.write(f"{player} 不要  剩余：{len(player.cards)}张牌！\n")
-                    if self.player_out:
-                        if self.log:
-                            with open(self.path, 'a+', encoding='GBK') as f:
-                                f.write(f"{self.players_out_list[-1]} 跑了！\n\n")
-                        break
+        while not self.stop:
+            self.later_turn()
+            self.borrow_light()  # 进入借光判定
 
-        self.borrow_light()  # 进入借光判定
+        print(self.winner)
 
     def add_player(self, *args):
         self.players = list(args)
@@ -155,7 +139,7 @@ class GameRound:
     def turn_cards(self, player):
         self.current_cards = player.my_turn(**self.current_cards)
         self.left_cards = list(set(self.left_cards) - set(self.current_cards['cards']))
-        if self.friends_card in self.current_cards['cards']:
+        if self.friends_card[0] in self.current_cards['cards']:
             if not self.publicised:
                 self.publicise()
         if not player.cards:  # 玩家没手牌了
@@ -167,28 +151,48 @@ class GameRound:
                     self.stop = True
             i = self.players.index(player)
             self.players_out_list.append(player)
+            if player in self.h3_team:
+                self.h3_team.remove(player)
+            else:
+                self.not_h3_team.remove(player)
             self.players.remove(player)
             self.players = self.players[i:] + self.players[:i]  # 重新排序玩家
-            if (not self.h3_team) or (not self.not_h3_team):
+            print((not self.h3_team) or (not self.not_h3_team))
+            if (not self.h3_team) or (not self.not_h3_team):  # 判断游戏是否结束
                 if not self.h3_team:
-                    self.winner = self.h3_team
+                    self.winner = self.h3.team
                 else:
-                    self.winner = self.not_h3_team
+                    self.winner = self.h3.enemy
                 self.stop = True
             self.player_out = True
 
-    def borrow_light(self):
+    def borrow_light(self):  # 借光判定
+        print('before', self.current_cards)
         table_cards = self.current_cards
         for player in self.players:
             self.turn_cards(player)
+            if self.log:
+                with open(self.path, 'a+', encoding='GBK') as f:
+                    if player == self.current_cards['player']:
+                        f.write(f"{player}出了{self.current_cards['cards']} 剩余：{len(player.cards)}张牌！\n")
+                    else:
+                        f.write(f"{player} 不要  剩余：{len(player.cards)}张牌！\n")
+            print(player, self.current_cards)
         if table_cards == self.current_cards:
             print('借光判定')
-            if self.publicised:
+            if self.publicised:  # 知道身份
                 for player in self.players:
                     if self.players_out_list[-1] in player.friend:
                         print(player, '借光了！', player.friend)
+                        self.current_cards['player'] = player
+                        break
+            elif self.players[0] == self.h3:
+                print("你是红3，你不能借光！")
+                self.current_cards['player'] = self.players[1]
             else:
-                pass
+                print(f"{self.players[0]}, 借光借光借光")
+                self.current_cards['player'] = self.players[0]
+        self.player_out = False
 
     def first_turn(self):
         if self.log:
@@ -217,3 +221,22 @@ class GameRound:
                 f.write(f"红桃3一伙：{self.h3_team}\n")
                 f.write(f"其他一伙：{self.not_h3_team}\n")
                 f.write(f"基础分值：{self.base_point}\n")
+
+    def later_turn(self):
+        if self.log:
+            with open(self.path, 'a+', encoding='GBK') as f:
+                f.write(f"\n后续出牌！\n")
+        while not self.player_out:
+            for player in self.players:
+                self.turn_cards(player)
+                if self.log:
+                    with open(self.path, 'a+', encoding='GBK') as f:
+                        if player == self.current_cards['player']:
+                            f.write(f"{player}出了{self.current_cards['cards']} 剩余：{len(player.cards)}张牌！\n")
+                        else:
+                            f.write(f"{player} 不要  剩余：{len(player.cards)}张牌！\n")
+                if self.player_out:
+                    if self.log:
+                        with open(self.path, 'a+', encoding='GBK') as f:
+                            f.write(f"{self.players_out_list[-1]} 跑了！\n\n")
+                    break

@@ -96,7 +96,7 @@ class Player:
         return self.name
 
     def answer(self, player):
-        if random.randint(1, 1) == 1:
+        if random.randint(1, 1) == 2:
             return self
         else:
             return player
@@ -104,16 +104,16 @@ class Player:
     def get_info(self, *team_info):
         if self in team_info[0]:
             self.friend = list(set(team_info[0]) - {self})
-            self.enemy = team_info[1]
-            self.team = team_info[0]
+            self.enemy = list(team_info[1])
+            self.team = list(team_info[0])
         else:
             self.friend = list(set(team_info[1]) - {self})
-            self.enemy = team_info[0]
-            self.team = team_info[1]
+            self.enemy = list(team_info[0])
+            self.team = list(team_info[1])
 
     @staticmethod
     def top_dog():
-        if random.randint(1, 10) == 1:
+        if random.randint(1, 1) == 2:
             return True
 
     def my_turn(self, **kwargs):

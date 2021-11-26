@@ -94,18 +94,37 @@ class Player:
     def __repr__(self):
         return self.name
 
-    def echo(self, team_info):  # 吱声
-        pass
-
-    def find(self, team_info):  # 寻找
-        pass
+    def answer(self, player):
+        if random.randint(1, 3) == 1:
+            return self
+        else:
+            return player
 
     def get_info(self, *team_info):
-        if self.h3:
+        if self in team_info[0]:
             self.friend = list(set(team_info[0]) - {self})
-            self.enemy = team_info[1]
-        elif self.echo_flag:
             self.enemy = team_info[1]
         else:
             self.friend = list(set(team_info[1]) - {self})
             self.enemy = team_info[0]
+
+    @staticmethod
+    def top_dog():
+        if random.randint(1, 20) == 1:
+            return True
+
+    def my_turn(self, **kwargs):
+        cards = kwargs['cards']
+        player = kwargs['player']
+        if player is None or player == self:
+            out_cards = self.play_cards()
+            print(self, '出牌', out_cards, len(self.cards))
+            return {'cards': out_cards, 'player': self}
+        else:
+            out_cards = self.over_cards(cards)
+            if out_cards:
+                print(self, '要牌', out_cards[0], len(self.cards))
+                return {'cards': out_cards[0], 'player': self}
+            else:
+                print(self, '要不起', out_cards, len(self.cards))
+                return kwargs

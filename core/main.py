@@ -31,4 +31,4 @@ def run(debug=False):
     p4 = Player('玩家4')
     game = GameRound(path)
     game.add_player(p1, p2, p3, p4)
-    game.start_game(log=True)
+    game.start_game(log=False)

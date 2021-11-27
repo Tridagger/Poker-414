@@ -41,7 +41,7 @@ class PokerServer(socketserver.BaseRequestHandler):
                     if game.round_cards:
                         player_hand_cards = game.round_cards.pop()
                         time.sleep(0.1)
-                        file.sendto(str(player_hand_cards).encode(), player_addr)
+                        file.sendto(pickle.dumps(player_hand_cards), player_addr)
             for addr in game.players:
                 file.sendto('stop'.encode(), addr)
 

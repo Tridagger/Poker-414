@@ -23,10 +23,6 @@ class PokerServer(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        """
-        必须实现这个方法！
-        :return:
-        """
         data, file = self.request
         s2c = S2C(file, game.static_players)
         match pickle.loads(data):

@@ -8,29 +8,30 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/18
 -------------------------------------------------
 """
-# import time
-# import socketserver
-from core.player import Player
-# from core.poker import *
-# from core.server import game_server
-# from threading import Thread
-# from tests.cards import cards_generate
-# from core.tools import *
+
+import socketserver
 from core.game import GameRound
+from core.server import PokerServer
+import threading
+import time
 
-
-# 运行程序
 def run(debug=False):
     if debug:
         pass
-    for i in range(1):
-        path = '../logs/log.txt'
-        with open(path, 'w+', encoding='GBK') as f:
-            f.write('')
-        p1 = Player('玩家1')
-        p2 = Player('玩家2')
-        p3 = Player('玩家3')
-        p4 = Player('玩家4')
-        game = GameRound(path)
-        game.add_player(p1, p2, p3, p4)
-        game.start_game(log=True)
+
+    # 创建一个多线程TCP服务器
+    server = socketserver.ThreadingUDPServer(('0.0.0.0', 9999), PokerServer)  # 实例化一个多线程服务器
+
+    def run_server():
+        print("启动游戏服务器！")
+        server.serve_forever()
+
+    def game_task():
+        pass
+
+    t1 = threading.Thread(target=run_server)
+    t2 = threading.Thread(target=game_task)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()

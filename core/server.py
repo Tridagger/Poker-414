@@ -8,27 +8,40 @@ Email: san.limeng@qq.com
 Create Date: 2021/11/24
 -------------------------------------------------
 """
-
 import socketserver
+import time
+from core.game import GameRound
+game = GameRound()
+import pickle
 
 
 class PokerServer(socketserver.BaseRequestHandler):
+    """
+    必须继承socketserver.BaseRequestHandler类
+    """
+
     def handle(self):
-        conn = self.request
-        addr = self.client_address
-        player = str(conn.recv(1024), encoding='utf8')
-        print(player, 'from', addr)
-        conn.sendall(bytes(f'{player}与服务器建立链接', encoding='utf8'))
-        while True:
-            recv_data = str(conn.recv(1024), encoding='utf8')
-            print(recv_data)
-            if recv_data == 'bye':
-                break
+        """
+        必须实现这个方法！
+        :return:
+        """
+        data, file = self.request
 
-            send_data = bytes(input('请输入回复消息：'), encoding='utf8')
-            conn.sendall(send_data)
-        conn.close()
+        if data == b"link to server":
+            game.add_player(self.client_address)
+            file.sendto(f'当前有{len(game.players)}名玩家，请等待！'.encode(), self.client_address)
 
+        if len(game.players) == 4:
+            time.sleep(1)
+            for addr in game.players:
+                file.sendto('4名玩家已到齐，开始游戏!'.encode(), addr)
 
-game_server = socketserver.ThreadingTCPServer(('0.0.0.0', 35652), PokerServer)
+            while game.round_cards:
+                for player_addr in game.players:
+                    if game.round_cards:
+                        player_hand_cards = game.round_cards.pop()
+                        time.sleep(0.1)
+                        file.sendto(str(player_hand_cards).encode(), player_addr)
+            for addr in game.players:
+                file.sendto('stop'.encode(), addr)
 

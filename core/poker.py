@@ -21,7 +21,7 @@ class Card(collections.namedtuple('Poker', ['rank', 'suit', 'level'])):  # 定�
         return f'{self.suit}{self.rank}'
 
 
-class PokerCard:
+class PokerCard(list):
     """
     扑克牌，54张，包含大小王
     """
@@ -47,6 +47,7 @@ class PokerCard:
         # 列表生成式
         # 创建对象时自动赋值_cards
         self._cards = [c for card in self.cards.values() for c in card]
+        super().__init__(self._cards)
 
     def __len__(self):
         return len(self._cards)
@@ -57,8 +58,8 @@ class PokerCard:
     def shuffle(self, n=2):
         """
         洗牌，将扑克牌打乱
-        :param n: 洗牌次数
-        :return: "洗牌结束"
+        :param n:int 洗牌次数
+        :return:list 洗好牌的
         """
         for i in range(n):
             random.shuffle(self._cards)

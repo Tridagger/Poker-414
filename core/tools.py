@@ -13,6 +13,12 @@ from core.poker import PokerCard
 
 
 def sort_card(cards):
+    """
+    根据 level 值，排序扑克牌列表
+    :param cards: list 扑克牌列表
+    :return: list 扑克牌列表
+    """
+    assert isinstance(cards, list)
     if not cards:
         return []
     if isinstance(cards[0], list):
@@ -22,6 +28,13 @@ def sort_card(cards):
 
 
 def remove_duplicate_card(cards, m=2):
+    """
+    移除 level 值相同或 <=m 的扑克牌
+    :param cards: list 扑克牌列表
+    :param m: int
+    :return: list 扑克牌列表
+    """
+    assert isinstance(cards, list)
     new_cards = []
     for card in cards:
         if card.level > m and card.level not in [c.level for c in new_cards]:
@@ -30,11 +43,21 @@ def remove_duplicate_card(cards, m=2):
 
 
 def is_solo(cards):
+    """
+    判断是否为单张牌，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
-    return len(cards) == 1, cards[0].level
+    return len(cards) == 1, cards[0].level, 1
 
 
 def is_pair(cards):
+    """
+    判断是否为单张牌，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     if len(cards) == 2:
         return cards[0].rank == cards[1].rank, cards[0].level, 2
@@ -43,6 +66,11 @@ def is_pair(cards):
 
 
 def is_chain(cards):
+    """
+    判断是否为顺子，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     rd_cards = remove_duplicate_card(cards)
     if 3 <= len(cards) == len(rd_cards):
@@ -52,6 +80,11 @@ def is_chain(cards):
 
 
 def is_dual_chain(cards):
+    """
+    判断是否为连对，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     cl = sorted(cards, key=lambda cd: cd.level)
     cs = remove_duplicate_card(cards)
@@ -65,22 +98,42 @@ def is_dual_chain(cards):
 
 
 def is_bomb(cards):
+    """
+    判断是否为炸弹，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     return len(cards) == 3 and len(remove_duplicate_card(cards)) == 1, cards[0].level, 3
 
 
 def is_missile(cards):
+    """
+    判断是否为导弹，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     return len(cards) == 4 and len(remove_duplicate_card(cards)) == 1, cards[0].level, 4
 
 
 def is_rocket(cards):
+    """
+    判断是否为火箭，返回结果, level 值, 牌数
+    :param cards: list 扑克牌列表
+    :return: bool, int, int
+    """
     assert isinstance(cards, list)
     cl = sorted([c.level for c in cards])
     return len(cards) == 3 and cl == [4, 4, 14], 99, 3
 
 
 def cards_type(cards):
+    """
+    判断扑克牌类型，如果没有识别的类型则返回 False
+    :param cards: list 扑克牌列表
+    :return: dict 类型字典
+    """
     assert isinstance(cards, list)
     if is_solo(cards)[0]:
         return {"牌型": "单牌", "等级": 1, "牌数": 1, "大小": is_solo(cards)[1]}
@@ -101,7 +154,13 @@ def cards_type(cards):
 
 
 def cards_compare(cards1, cards2):
-    assert cards_type(cards2)
+    """
+    扑克牌比较，如果后面的大返回 True，如果前面的大则返回 False
+    :param cards1: list 扑克牌列表
+    :param cards2: list 扑克牌列表
+    :return: bool
+    """
+    assert cards_type(cards2)  # 确保被比较的牌是符合牌型规则的
     if cards_type(cards2)['等级'] != cards_type(cards1)['等级']:
         return cards_type(cards2)['等级'] > cards_type(cards1)['等级']
     else:
@@ -111,6 +170,12 @@ def cards_compare(cards1, cards2):
 
 
 def have_rocket(cards):
+    """
+    扑克牌中是否存在火箭
+    :param cards: list 扑克牌列表
+    :return: list
+    """
+    assert isinstance(cards, list)
     if len(cards) < 3:
         return []
     have_four = set(cards) & set(PokerCard.cards['4'])
@@ -122,6 +187,14 @@ def have_rocket(cards):
 
 
 def have_missile(cards, m=2, n=4):
+    """
+    扑克牌中是否存在大于 m 的导弹
+    :param n: int 导弹牌数，默认就行
+    :param m: int 被大于的导弹 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
+    assert isinstance(cards, list)
     if len(cards) < 3:
         return []
     level_list = [c.level for c in cards if c.level > m]
@@ -134,6 +207,14 @@ def have_missile(cards, m=2, n=4):
 
 
 def have_bomb(cards, m=2, n=3):
+    """
+    扑克牌中是否存在大于 m 的炸弹
+    :param n: int 导弹牌数，默认就行
+    :param m: int 被大于的炸弹 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
+    assert isinstance(cards, list)
     if len(cards) < 4:
         return []
     cards_list = []
@@ -146,6 +227,14 @@ def have_bomb(cards, m=2, n=3):
 
 
 def have_chain(cards, m=2, n=3):
+    """
+    扑克牌中是否存在大于 m 的 n 连顺子
+    :param n: int 顺子张数
+    :param m: int 被大于的顺子 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
+    assert isinstance(cards, list)
     if len(cards) < n:
         return []
     cards_list = []
@@ -160,6 +249,14 @@ def have_chain(cards, m=2, n=3):
 
 
 def have_dual_chain(cards, m=2, n=6):
+    """
+    扑克牌中是否存在大于 m 的 n 张连对
+    :param n: int 连对张数
+    :param m: int 被大于的连对 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
+    assert isinstance(cards, list)
     cards_list = []
     out_cards = PokerCard.cards['16'] + PokerCard.cards['18'] + PokerCard.cards['20']
     cards = list(set(cards) - set(out_cards))
@@ -175,14 +272,21 @@ def have_dual_chain(cards, m=2, n=6):
     if len(dual_cards) < n:
         return []
     dual_cards = sort_card(dual_cards)
-    for i in range(0, len(dual_cards)-n+1, 2):
-        cards_piece = dual_cards[i:i+n]
-        if len(cards_piece) == (cards_piece[-1].level - cards_piece[0].level + 1)*2:
+    for i in range(0, len(dual_cards) - n + 1, 2):
+        cards_piece = dual_cards[i:i + n]
+        if len(cards_piece) == (cards_piece[-1].level - cards_piece[0].level + 1) * 2:
             cards_list.append(cards_piece)
     return cards_list
 
 
 def have_pair(cards, m=2, n=2):
+    """
+    扑克牌中是否存在大于 m 的对牌
+    :param n: int 对牌张数，默认就行
+    :param m: int 被大于的对牌 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
     cards_list = []
     if len(cards) < n:
         return []
@@ -197,6 +301,13 @@ def have_pair(cards, m=2, n=2):
 
 
 def have_solo(cards, m=2, n=1):
+    """
+    扑克牌中是否存在大于 m 的单牌
+    :param n: int 单牌张数，默认就行
+    :param m: int 被大于的对牌 level
+    :param cards: list 扑克牌列表
+    :return: list
+    """
     cards_list = [] * n
     single_list = remove_duplicate_card(cards, m)
     for card in single_list:
@@ -205,6 +316,12 @@ def have_solo(cards, m=2, n=1):
 
 
 def cards_hint(cards1, cards2):
+    """
+    出牌提示，根据前面的牌，给出后面牌的出牌提示
+    :param cards1: list 扑克牌列表
+    :param cards2: list 扑克牌列表
+    :return: list 扑克牌列表
+    """
     assert cards_type(cards1)
     ct = cards_type(cards1)
     cards_list = []
@@ -218,18 +335,21 @@ def cards_hint(cards1, cards2):
                  '导弹': have_missile}
     cards_list += hint_dict[ct['牌型']](cards2, ct['大小'], ct['牌数'])
     if ct['等级'] == 1:
-        cards_list += hint_dict['炸弹'](cards2)
-        cards_list += hint_dict['导弹'](cards2)
-        cards_list += have_rocket(cards2)
+        cards_list += hint_dict['炸弹'](cards2) + hint_dict['导弹'](cards2) + have_rocket(cards2)
     elif ct['等级'] == 2:
-        cards_list += hint_dict['导弹'](cards2)
-        cards_list += have_rocket(cards2)
+        cards_list += hint_dict['导弹'](cards2) + have_rocket(cards2)
     elif ct['等级'] == 3:
         cards_list += have_rocket(cards2)
     return cards_list
 
 
 def play_cards(cards):
+    """
+    出牌，先出连对，再出顺子，再出对牌，最后出单牌
+    :param cards: list 扑克牌列表
+    :return:list 扑克牌列表
+    """
+    assert isinstance(cards, list)
     if have_dual_chain(cards):
         return have_dual_chain(cards)[0]
     elif have_chain(cards):

@@ -21,6 +21,7 @@ class SPlayer:
 
 class CPlayer:
     def __init__(self):
+        self.addr = None
         self.cards = []
         self.friends = []
         self.enemy = []

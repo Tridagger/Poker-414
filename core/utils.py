@@ -47,24 +47,27 @@ class Content:
         self.inform = None
         self.cards = None
         self.addr = None
+        self.next = None
         self.tools = send_tools
 
-    def send(self, addr):
+    def send(self, *addr):
         cont = {
-            'mode': self.mode,
-            'inform': self.inform,
-            'cards': self.cards,
-            'addr': self.addr
+            'MODE': self.mode,
+            'INFO': self.inform,
+            'CARD': self.cards,
+            'ADDR': self.addr,
+            'NEXT': self.next
         }
-        self.tools.send(cont, addr)
+        self.tools.send(cont, *addr)
         self.clear()
 
     def send_all(self):
         cont = {
-            'mode': self.mode,
-            'inform': self.inform,
-            'cards': self.cards,
-            'addr': self.addr
+            'MODE': self.mode,
+            'INFO': self.inform,
+            'CARD': self.cards,
+            'ADDR': self.addr,
+            'NEXT': self.next
         }
         self.tools.send_all(cont)
         self.clear()
@@ -74,3 +77,4 @@ class Content:
         self.inform = None
         self.cards = None
         self.addr = None
+        self.next = None

@@ -45,3 +45,11 @@ class GameRound:
         ls = ls[i:] + ls[:i]
         self.players = ls
 
+    def next(self, player):
+        i = self.players.index(player)
+        if i == len(self.players)-1:
+            return self.players[0].addr
+        else:
+            return self.players[i+1].addr
+
+

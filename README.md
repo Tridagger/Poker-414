@@ -14,4 +14,6 @@
 |HEART3|红桃3|C/S|
 |PLAYCARD|出牌|C/S|
 |COVERCARD|管牌|C|
+|NOTCOVER|要不起|C|
+|BLANK|没牌了|C/S|
 

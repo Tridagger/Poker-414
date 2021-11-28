@@ -52,4 +52,8 @@ class GameRound:
         else:
             return self.players[i+1].addr
 
+    def reround(self):
+        self.players = list(self.static_players)
+        self.round_cards = PokerCard().shuffle()
+
 

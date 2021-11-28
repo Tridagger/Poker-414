@@ -57,6 +57,19 @@ class PokerServer(socketserver.BaseRequestHandler):
                     t.inform = '发牌结束，请拥有【红桃3】的玩家要朋友！'
                     t.send_all()
 
+            case "REREADY":
+                while game.round_cards:
+                    for player in game.static_players:
+                        if game.round_cards:
+                            t.mode = 'DISTRIBUTE_POKER'  # 发牌
+                            t.cards = [game.round_cards.pop()]
+                            time.sleep(0.05)
+                            t.send(player.addr)
+
+                t.mode = 'STOP_DISTRIBUTE_POKER'  # 停止发牌
+                t.inform = '发牌结束，请拥有【红桃3】的玩家要朋友！'
+                t.send_all()
+
             case "HEART3":
                 player = game.addr_to_player(self.client_address)
                 game.circle(player)  # 调整玩家顺序
@@ -90,5 +103,23 @@ class PokerServer(socketserver.BaseRequestHandler):
                 t.inform = f"【{player.name}】 不要"
                 t.cards = data['CARD']
                 t.addr = data['ADDR']
+                t.next = game.next(player)
+                t.send_all()
+
+            case "BLANK":
+                player = game.addr_to_player(self.client_address)
+                t.mode = "ROUNDOVER"
+                t.inform = f"【{player.name}】出了{data['CARD']} 没牌了，跑了！"
+                t.cards = data['CARD']
+                t.addr = self.client_address
+                t.next = game.next(player)
+                game.circle_del(player)
+                game.reround()
+                t.send_all()
+
+            case "BORROWLIGHT":
+                player = game.addr_to_player(self.client_address)
+                t.inform = f"【{player.name}】想要借光！"
+                t.addr = self.client_address
                 t.next = game.next(player)
                 t.send_all()

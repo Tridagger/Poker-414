@@ -54,35 +54,61 @@ while True:
             friend_card = data['CARD'][0]
             h3_addr = data['ADDR']
             if Card('3', "红桃", 3) in player.cards:
-                t.mode = "PLAYCARD"
                 t.cards = play_cards(player.cards)
                 player.cards = list(set(player.cards)-set(t.cards))
                 time.sleep(0.5)
-                t.send()
+                if player.cards:
+                    t.mode = "PLAYCARD"
+                    t.send()
+                else:
+                    t.mode = "BLANK"
+                    t.send()
+            print(len(player.cards))
 
         case "PLAYCARD":  # 有玩家出牌，选择管牌还是出牌
             print(data['INFO'])
+            time.sleep(0.5)
             if data['NEXT'] == player.addr:
                 if data['ADDR'] != player.addr:
                     cards = cards_hint(data['CARD'], player.cards)
                     if cards:
                         t.cards = cards[0]
-                        t.mode = "COVERCARD"
                         player.cards = list(set(player.cards) - set(t.cards))
-                        time.sleep(0.5)
-                        t.send()
+                        if player.cards:
+                            t.mode = "COVERCARD"
+                            t.send()
+                        else:
+                            t.mode = "BLANK"
+                            t.send()
                     else:
                         t.mode = "NOTCOVER"
                         t.cards = data['CARD']
                         t.addr = data['ADDR']
-                        time.sleep(0.5)
                         t.send()
                 else:
-                    t.mode = "PLAYCARD"
                     t.cards = play_cards(player.cards)
                     player.cards = list(set(player.cards) - set(t.cards))
-                    time.sleep(0.5)
-                    t.send()
+                    if player.cards:
+                        t.mode = "PLAYCARD"
+                        t.send()
+                    else:
+                        t.mode = "BLANK"
+                        t.send()
+            print(len(player.cards), sort_card(player.cards))
 
-        case "COVERCARD":
+        case "BLANK":
             print(data['INFO'])
+            if data['NEXT'] == player.addr:
+                t.mode = "BORROWLIGHT"
+                t.send()
+
+        case "BORROWLIGHT":
+            pass
+
+        case "ROUNDOVER":  # 对局结束
+            print(data['INFO'])
+            player.cards = []
+            time.sleep(2)
+            t.mode = 'REREADY'
+            print("看看准备没？")
+            t.send()

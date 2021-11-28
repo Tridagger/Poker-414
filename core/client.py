@@ -53,7 +53,7 @@ else:
     data = c2s.load()
     print(data)
 
-data = c2s.load()
+data = c2s.load()  # 接收朋友牌
 print(data)
 
 while True:

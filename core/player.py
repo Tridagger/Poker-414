@@ -10,13 +10,19 @@ Create Date: 2021/11/27
 """
 
 
-class Player:
-    def __init__(self, name):
-        self.name = name
-        pass
+class SPlayer:
+    def __init__(self, name, addr):
+        self.name = "玩家"+name
+        self.addr = addr
 
     def __repr__(self):
-        return f"Client - {self.name}"
+        return self.name
 
-    def ready(self):
-        pass
+
+class CPlayer:
+    def __init__(self):
+        self.cards = []
+        self.friends = []
+        self.enemy = []
+        self.h3_owner = None
+

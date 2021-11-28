@@ -10,6 +10,7 @@ Create Date: 2021/11/27
 """
 
 from core.poker import PokerCard
+from core.player import SPlayer
 
 
 class GameRound:
@@ -19,7 +20,28 @@ class GameRound:
         self.static_players = []
 
     def add_player(self, client_address):  # 向对局中添加玩家
-        if client_address not in self.static_players:
-            self.static_players.append(client_address)
-            self.players.append(client_address)
+        if client_address not in [p.addr for p in self.static_players]:
+            player = SPlayer(str(len(self.players)+1), client_address)
+            self.static_players.append(player)
+            self.players.append(player)
+
+    def addr_to_player(self, addr):
+        for player in self.players:
+            if player.addr == addr:
+                return player
+
+    def circle_del(self, player):
+        ls = self.players
+        assert player in ls
+        i = ls.index(player)
+        ls = ls[i:] + ls[:i]
+        ls.remove(player)
+        self.players = ls
+
+    def circle(self, player):
+        ls = self.players
+        assert player in ls
+        i = ls.index(player)
+        ls = ls[i:] + ls[:i]
+        self.players = ls
 

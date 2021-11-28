@@ -49,7 +49,7 @@ while True:
                 t.cards = [random.choice([Card('A', suit, 14) for suit in PokerCard.suits])]
                 t.send()
 
-        case "HEART3":  # 公开红桃3信息，及要朋友信息
+        case "HEART3":  # 公开红桃3信息，及要朋友信息，有红桃3的玩家先出牌
             print(data['INFO'])
             friend_card = data['CARD'][0]
             h3_addr = data['ADDR']
@@ -60,14 +60,29 @@ while True:
                 time.sleep(0.5)
                 t.send()
 
-        case "PLAYCARD":  # 有玩家出牌
+        case "PLAYCARD":  # 有玩家出牌，选择管牌还是出牌
             print(data['INFO'])
             if data['NEXT'] == player.addr:
-                t.mode = "OVERCARD"
-                t.cards = cards_hint(data['CARD'], player.cards)[0]
-                player.cards = list(set(player.cards) - set(t.cards))
-                time.sleep(0.5)
-                t.send()
+                if data['ADDR'] != player.addr:
+                    cards = cards_hint(data['CARD'], player.cards)
+                    if cards:
+                        t.cards = cards[0]
+                        t.mode = "COVERCARD"
+                        player.cards = list(set(player.cards) - set(t.cards))
+                        time.sleep(0.5)
+                        t.send()
+                    else:
+                        t.mode = "NOTCOVER"
+                        t.cards = data['CARD']
+                        t.addr = data['ADDR']
+                        time.sleep(0.5)
+                        t.send()
+                else:
+                    t.mode = "PLAYCARD"
+                    t.cards = play_cards(player.cards)
+                    player.cards = list(set(player.cards) - set(t.cards))
+                    time.sleep(0.5)
+                    t.send()
 
-        case "OVERCARD":
+        case "COVERCARD":
             print(data['INFO'])

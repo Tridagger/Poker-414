@@ -75,11 +75,20 @@ class PokerServer(socketserver.BaseRequestHandler):
                 t.next = game.next(player)
                 t.send_all()
 
-            case "OVERCARD":
+            case "COVERCARD":
                 player = game.addr_to_player(self.client_address)
-                t.mode = "OVERCARD"
+                t.mode = "PLAYCARD"
                 t.inform = f"【{player.name}】管了 {data['CARD']}"
                 t.cards = data['CARD']
                 t.addr = self.client_address
+                t.next = game.next(player)
+                t.send_all()
+
+            case "NOTCOVER":
+                player = game.addr_to_player(self.client_address)
+                t.mode = "PLAYCARD"
+                t.inform = f"【{player.name}】 不要"
+                t.cards = data['CARD']
+                t.addr = data['ADDR']
                 t.next = game.next(player)
                 t.send_all()

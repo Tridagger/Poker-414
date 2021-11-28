@@ -13,5 +13,5 @@
 |STOP_DISTRIBUTE_POKER|停止发牌，红桃3要朋友|S|
 |HEART3|红桃3|C/S|
 |PLAYCARD|出牌|C/S|
-|OVERCARD|管牌|C/S|
+|COVERCARD|管牌|C|
 

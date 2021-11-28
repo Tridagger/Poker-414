@@ -50,7 +50,6 @@ class PokerServer(socketserver.BaseRequestHandler):
                             if game.round_cards:
                                 t.mode = 'DISTRIBUTE_POKER'  # 发牌
                                 t.cards = [game.round_cards.pop()]
-                                time.sleep(0.05)
                                 t.send(player.addr)
 
                     t.mode = 'STOP_DISTRIBUTE_POKER'  # 停止发牌
@@ -63,7 +62,6 @@ class PokerServer(socketserver.BaseRequestHandler):
                         if game.round_cards:
                             t.mode = 'DISTRIBUTE_POKER'  # 发牌
                             t.cards = [game.round_cards.pop()]
-                            time.sleep(0.05)
                             t.send(player.addr)
 
                 t.mode = 'STOP_DISTRIBUTE_POKER'  # 停止发牌
@@ -111,9 +109,9 @@ class PokerServer(socketserver.BaseRequestHandler):
                 t.mode = "ROUNDOVER"
                 t.inform = f"【{player.name}】出了{data['CARD']} 没牌了，跑了！"
                 t.cards = data['CARD']
-                t.addr = self.client_address
-                t.next = game.next(player)
-                game.circle_del(player)
+                # t.addr = self.client_address
+                # t.next = game.next(player)
+                # game.circle_del(player)
                 game.reround()
                 t.send_all()
 

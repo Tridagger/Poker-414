@@ -56,7 +56,7 @@ while True:
             if Card('3', "红桃", 3) in player.cards:
                 t.cards = play_cards(player.cards)
                 player.cards = list(set(player.cards)-set(t.cards))
-                time.sleep(0.5)
+
                 if player.cards:
                     t.mode = "PLAYCARD"
                     t.send()
@@ -67,7 +67,6 @@ while True:
 
         case "PLAYCARD":  # 有玩家出牌，选择管牌还是出牌
             print(data['INFO'])
-            time.sleep(0.5)
             if data['NEXT'] == player.addr:
                 if data['ADDR'] != player.addr:
                     cards = cards_hint(data['CARD'], player.cards)
@@ -86,14 +85,15 @@ while True:
                         t.addr = data['ADDR']
                         t.send()
                 else:
-                    t.cards = play_cards(player.cards)
-                    player.cards = list(set(player.cards) - set(t.cards))
                     if player.cards:
-                        t.mode = "PLAYCARD"
-                        t.send()
-                    else:
-                        t.mode = "BLANK"
-                        t.send()
+                        t.cards = play_cards(player.cards)
+                        player.cards = list(set(player.cards) - set(t.cards))
+                        if player.cards:
+                            t.mode = "PLAYCARD"
+                            t.send()
+                        else:
+                            t.mode = "BLANK"
+                            t.send()
             print(len(player.cards), sort_card(player.cards))
 
         case "BLANK":
@@ -108,7 +108,6 @@ while True:
         case "ROUNDOVER":  # 对局结束
             print(data['INFO'])
             player.cards = []
-            time.sleep(2)
             t.mode = 'REREADY'
             print("看看准备没？")
             t.send()
